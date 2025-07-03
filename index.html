@@ -1,32 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>file.d documentation</title>
-  <link rel="icon" type="image/png" href="/file.d/static/file.d.png" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="A blazing fast tool for building data pipelines: read, process, and output events.">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
-</head>
-<body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      name: 'file.d',
-      repo: 'https://github.com/ozontech/file.d',
-      loadSidebar: true,
-      loadNavbar: true,
-      subMaxLevel: 2,
-      maxLevel: 1,
-      coverpage: true,
-      auto2top: true,
-      markdown: {
-        gfm: true
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Super Mario</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #5c94fc;
+      overflow: hidden;
+    }
+
+    .game {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      background: linear-gradient(to top, #228b22 10%, #5c94fc 10%);
+    }
+
+    .mario {
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+      width: 50px;
+      height: 50px;
+      background: url('https://i.imgur.com/Hp5EnjR.png') no-repeat;
+      background-size: cover;
+    }
+
+    .pipe {
+      position: absolute;
+      bottom: 0;
+      right: -60px;
+      width: 60px;
+      height: 100px;
+      background: url('https://i.imgur.com/f59bOQH.png') no-repeat;
+      background-size: cover;
+      animation: movePipe 2s linear infinite;
+    }
+
+    @keyframes movePipe {
+      0% {
+        right: -60px;
+      }
+      100% {
+        right: 100%;
       }
     }
+
+    .jump {
+      animation: jump 0.5s ease-out;
+    }
+
+    @keyframes jump {
+      0% {
+        bottom: 0;
+      }
+      50% {
+        bottom: 150px;
+      }
+      100% {
+        bottom: 0;
+      }
+    }
+
+    .game-over {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: white;
+      background: red;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="game" id="game">
+    <div class="mario" id="mario"></div>
+    <div class="pipe" id="pipe"></div>
+    <div class="game-over" id="gameOver">Game Over</div>
+  </div>
+
+  <script>
+    const mario = document.getElementById("mario");
+    const pipe = document.getElementById("pipe");
+    const gameOver = document.getElementById("gameOver");
+
+    document.addEventListener("keydown", function(event) {
+      if (event.code === "Space" || event.code === "ArrowUp") {
+        jump();
+      }
+    });
+
+    function jump() {
+      if (!mario.classList.contains("jump")) {
+        mario.classList.add("jump");
+        setTimeout(() => {
+          mario.classList.remove("jump");
+        }, 500);
+      }
+    }
+
+    const checkCollision = setInterval(() => {
+      const marioBottom = parseInt(window.getComputedStyle(mario).getPropertyValue("bottom"));
+      const pipeLeft = parseInt(window.getComputedStyle(pipe).getPropertyValue("right"));
+
+      if (pipeLeft > window.innerWidth - 120 && pipeLeft < window.innerWidth - 60 && marioBottom < 60) {
+        pipe.style.animation = "none";
+        pipe.style.right = pipeLeft + "px";
+        gameOver.style.display = "block";
+        clearInterval(checkCollision);
+      }
+    }, 10);
   </script>
-  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-  <script src="//unpkg.com/docsify-copy-code"></script>
 </body>
 </html>
